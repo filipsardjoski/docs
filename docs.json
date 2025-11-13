@@ -51,11 +51,16 @@
         "tab": "API reference",
         "groups": [
           {
-            "group": "API documentation",
-            "openapi": "openapi.json",
-            "pages": [
-              "api-reference/introduction"
-            ]
+            "group": "v1 (stable)",
+            "openapi": {
+              "source": "openapi.json"
+            }
+          },
+          {
+            "group": "v2 (beta)",
+            "openapi": {
+              "source": "openapi.json"
+            }
           }
         ]
       }
