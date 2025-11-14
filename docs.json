@@ -49,7 +49,7 @@
       },
       {
         "tab": "API reference",
-        "group": [
+        "groups": [
           {
             "openapi": {
               "source": "openapi.json"
