@@ -51,6 +51,7 @@
         "tab": "API reference",
         "groups": [
           {
+            "group": "Reference",
             "openapi": {
               "source": "openapi.json"
             }
