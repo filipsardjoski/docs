@@ -49,15 +49,8 @@
       },
       {
         "tab": "API reference",
-        "groups": [
+        "group": [
           {
-            "group": "v1 (stable)",
-            "openapi": {
-              "source": "openapi.json"
-            }
-          },
-          {
-            "group": "v2 (beta)",
             "openapi": {
               "source": "openapi.json"
             }
