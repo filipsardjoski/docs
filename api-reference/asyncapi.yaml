@@ -1,7 +1,7 @@
 asyncapi: 3.0.0
 info:
   title: interhuman-api
-  version: 1.2.16
+  version: 1.2.18
   description: ''
 servers:
   production:
@@ -37,13 +37,43 @@ channels:
                 aid lookup and support investigations. This header is not echoed back
                 in the response; the server returns its own correlation ID in the
                 `X-Correlation-ID` HTTP response header.
-            sec-websocket-protocol:
+            Sec-WebSocket-Protocol:
               type: string
               description: Authentication credential supplied during the WebSocket
                 handshake. Pass your API key here when your client cannot set an `Authorization`
                 header for WebSocket connections.
               examples:
               - <api_key>
+        query:
+          type: object
+          properties:
+            include[]:
+              type: array
+              description: 'Optional flags indicating which conversation quality sections
+                to include in result messages. Repeat the parameter once per flag
+                (for example `?include[]=conversation_quality_overall&include[]=conversation_quality_timeline`).
+
+
+                Accepted values:
+
+
+                - `conversation_quality_overall`: include the overall conversation
+                quality index, cumulative across every segment processed so far in
+                the session.
+
+                - `conversation_quality_timeline`: include the per-segment conversation
+                quality entry for the current segment window.
+
+
+                When omitted, no optional sections are included. Unknown values are
+                ignored.'
+              items:
+                type: string
+                enum:
+                - conversation_quality_overall
+                - conversation_quality_timeline
+              examples:
+              - - conversation_quality_overall
   stream_analyze_v1:
     address: /v1/stream/analyze
     title: stream_analyze_v1
@@ -73,13 +103,43 @@ channels:
                 aid lookup and support investigations. This header is not echoed back
                 in the response; the server returns its own correlation ID in the
                 `X-Correlation-ID` HTTP response header.
-            sec-websocket-protocol:
+            Sec-WebSocket-Protocol:
               type: string
               description: Authentication credential supplied during the WebSocket
                 handshake. Pass your API key here when your client cannot set an `Authorization`
                 header for WebSocket connections.
               examples:
               - <api_key>
+        query:
+          type: object
+          properties:
+            include[]:
+              type: array
+              description: 'Optional flags indicating which conversation quality sections
+                to include in result messages. Repeat the parameter once per flag
+                (for example `?include[]=conversation_quality_overall&include[]=conversation_quality_timeline`).
+
+
+                Accepted values:
+
+
+                - `conversation_quality_overall`: include the overall conversation
+                quality index, cumulative across every segment processed so far in
+                the session.
+
+                - `conversation_quality_timeline`: include the per-segment conversation
+                quality entry for the current segment window.
+
+
+                When omitted, no optional sections are included. Unknown values are
+                ignored.'
+              items:
+                type: string
+                enum:
+                - conversation_quality_overall
+                - conversation_quality_timeline
+              examples:
+              - - conversation_quality_overall
 operations:
   receive_handler:
     action: receive

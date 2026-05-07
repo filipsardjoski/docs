@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: interhuman-api
-  version: 1.2.16
+  version: 1.2.18
 servers:
 - url: https://api.interhuman.ai
   description: Production environment
@@ -96,7 +96,7 @@ paths:
                 link: https://docs.interhuman.ai/api-reference/error-handling#ih2002-missing-credentials
                 message: 'No authentication credentials were provided. Include your
                   API key in the ''Authorization: Bearer <api_key>'' header (or in
-                  the ''sec-websocket-protocol'' header for WebSocket connections).'
+                  the ''Sec-WebSocket-Protocol'' header for WebSocket connections).'
         '403':
           description: Forbidden. The API key does not include the required scope
             (ih2003).
