@@ -1,0 +1,67 @@
+---
+title: Conversation quality
+description: "How Interhuman quantifies behavioral interaction quality using CQI, dimension scores, and event metrics."
+---
+
+# Conversation Quality
+
+Conversation quality is Interhuman’s way of measuring how well an interaction unfolds behaviorally over time — separate from what was discussed or whether a desired outcome was achieved.
+
+We compute a **Conversation Quality Index** plus a set of **dimension scores** derived from automatically detected social signals (e.g., engagement, stress, disagreement).
+
+## What conversation quality is (and isn’t)
+
+### What it captures
+
+- The behavioral quality of an interaction (how it is handled), grounded in observable social signals over time.
+- A diagnostic profile across stable dimensions like clarity, authority, energy, rapport, and learning.
+
+### What it does not capture
+
+- Whether the conversation “worked” (deal outcomes, persuasion success, interview pass/fail).
+- Whether the right topics were covered (sales-stage or checklist frameworks).
+- A semantic evaluation of the content itself.
+
+## Inputs
+
+Conversation quality is computed from Interhuman’s detected behavioral outputs:
+
+- `engagement_state`: the person’s attention level to the interaction at a given moment, expressed as engagement, disengagement, or neutral
+- `signals`: specific social behaviors detected in the interaction, such as hesitation, agreement, confusion, etc.
+
+See: [Social signals](/explanations/social-signals)
+
+## Outputs (two-layer structure)
+
+Conversation quality follows a layered structure (diagnostic first, summary second):
+
+1. **Quality Index** — a single headline score (0–100)
+2. **Dimension scores** — 0–100 scores for a small set of stable behavioral dimensions
+
+## Layer 1 — Conversation Quality Index
+
+The Conversation Quality Index is a single summary score answering: “How good was this interaction, behaviorally speaking?”
+
+- Range: **0–100**
+- The Conversation Quality Index is always shown alongside the underlying dimension scores
+- The Conversation Quality Index is computed as the arithmetic mean of the five dimension scores.
+
+### Qualitative interpretation bands
+
+- **0–30**: Weak
+- **30–50**: Below average
+- **50–65**: Moderate
+- **65–80**: Good
+- **80–100**: Excellent
+
+## Layer 2 — Dimension scores
+
+A dimension score shows how strongly a conversation expressed a given quality overall, based on the balance of helpful versus harmful behavioral signals.
+
+### Core dimensions
+
+- **Clarity / Structure** — how easy it is to follow the message (order, concision, clarity)
+- **Authority / Credibility** — decisiveness and credibility (certainty vs. hedging/hesitation)
+- **Energy / Presence** — vitality, responsiveness, participatory energy
+- **Rapport / Relational Safety** — warmth, respect, trust, emotional safety
+- **Learning / Exploration** — curiosity, reflection, experimentation, openness to learning

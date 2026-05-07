@@ -1,0 +1,180 @@
+---
+title: "Video Analysis"
+---
+
+Use this quickstart to get your first successful analysis response in a few minutes.
+
+In this guide, you will:
+1. Upload a local video file to `POST /v1/upload/analyze`
+2. Read `engagement_state`, `signals[]` (including per-signal `rationale`), and optional `conversation_quality` outputs
+
+<Note>
+  You’ll need an API key. Follow the [API key guide](/how-to/get-api-key) for details.
+  You’ll also need a video file. You can download an example from <a href="/getting-started/whitney-houston%E2%80%99s-response-to-being-vocally-compared-to-mariah-carey.mp4" download>here</a>.
+</Note>
+
+## 1) Upload and analyze a video
+
+Use one of the requests below to send a local video file (mp4, avi, mov, mkv, mpeg-ts, webm; minimum 10 KB, maximum 32MB) to `POST /v1/upload/analyze`.
+
+The API returns core analysis by default. You can optionally request conversation-quality sections by passing `include[]` flags (shown below).
+
+<CodeGroup>
+```bash cURL
+export API_KEY="YOUR_API_KEY"
+export VIDEO_PATH="path_to_your_video.mp4"
+
+curl -X POST https://api.interhuman.ai/v1/upload/analyze \
+  -H "Authorization: Bearer ${API_KEY}" \
+  -F "file=@${VIDEO_PATH};type=video/mp4" \
+  -F "include[]=conversation_quality_overall" \
+  -F "include[]=conversation_quality_timeline"
+```
+
+```javascript JavaScript icon="square-js"
+import fs from "fs";
+import FormData from "form-data";
+import fetch from "node-fetch";
+
+const formData = new FormData();
+formData.append("file", fs.createReadStream(process.env.VIDEO_PATH));
+formData.append("include[]", "conversation_quality_overall");
+formData.append("include[]", "conversation_quality_timeline");
+
+fetch("https://api.interhuman.ai/v1/upload/analyze", {
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${process.env.API_KEY}`
+  },
+  body: formData
+})
+  .then((res) => res.text())
+  .then((text) => console.log("Response:", text))
+  .catch((err) => console.error(err));
+```
+
+```python Python icon="python"
+import os
+import requests
+
+api_key = os.environ["API_KEY"]
+video_path = os.environ["VIDEO_PATH"]
+
+with open(video_path, "rb") as f:
+    files = {"file": (os.path.basename(video_path), f, "video/mp4")}
+    data = [
+        ("include[]", "conversation_quality_overall"),
+        ("include[]", "conversation_quality_timeline"),
+    ]
+    response = requests.post(
+        "https://api.interhuman.ai/v1/upload/analyze",
+        headers={"Authorization": f"Bearer {api_key}"},
+        files=files,
+        data=data,
+        timeout=300,
+    )
+
+print("Status code:", response.status_code)
+print("Response:", response.text)
+```
+</CodeGroup>
+
+If you want only core outputs, remove the `include[]` lines.
+
+Reference: [Upload & Analyze API](/api-reference/upload-analyze)
+
+## 2) Read the response
+
+After your upload is processed, the API returns a structured response with three complementary outputs:
+
+- **engagement_state**: Time-bounded labels such as `engaged`, `disengaged`, or `neutral`.
+- **signals[]**: Time-bounded [social signals](/explanations/social-signals), each with `type`, `probability`, and `rationale`.
+- **conversation_quality** (optional): Reuses the `conversation_quality_values` shape in both `overall` and each timeline window's `values` object.
+
+Time fields (`start`, `end`) are expressed in seconds from the start of the uploaded video.
+
+`conversation_quality_values` shape (reused by `conversation_quality.overall` and `conversation_quality.timeline[].values`):
+
+```json
+{
+  "quality_index": 45,
+  "energy": 53,
+  "rapport": 50,
+  "authority": 49,
+  "learning": 50,
+  "clarity": 48
+}
+```
+
+Here’s an example of what the API returns:
+
+```json
+{
+  "engagement_state": [
+    {
+      "start": 0,
+      "end": 10,
+      "state": "engaged"
+    },
+    {
+      "start": 10,
+      "end": 20,
+      "state": "disengaged"
+    }
+  ],
+  "signals": [
+    {
+      "start": 0,
+      "end": 10,
+      "type": "agreement",
+      "probability": "high",
+      "rationale": "The speaker provides a quick affiliative nod while the partner is speaking."
+    },
+    {
+      "start": 5,
+      "end": 15,
+      "type": "confidence",
+      "probability": "medium",
+      "rationale": "The speaker maintains upright posture and responds with steady, fluent delivery."
+    }
+  ],
+  "conversation_quality": {
+    "overall": {
+      "quality_index": 45,
+      "energy": 53,
+      "rapport": 50,
+      "authority": 49,
+      "learning": 50,
+      "clarity": 48
+    },
+    "timeline": [
+      {
+        "start": 0,
+        "end": 10,
+        "values": {
+          "quality_index": 72,
+          "energy": 80,
+          "rapport": 75,
+          "authority": 68,
+          "learning": 70,
+          "clarity": 67
+        }
+      }
+    ]
+  }
+}
+```
+
+### How to interpret it quickly
+
+- `signals[]` gives moment-level events; `rationale` explains why each signal was inferred.
+- `engagement_state` shows attention level over contiguous windows.
+- `conversation_quality.overall` is a single interaction summary.
+- `conversation_quality.timeline[]` shows how quality changes over time.
+
+## Next steps
+
+- [Build a Video Analyzer App](/how-to/build-video-analyzer-app-codealong) — full UI codealong.
+- [Social signals](/explanations/social-signals) — meaning of each signal type.
+- [Conversation quality](/explanations/conversation-quality) — quality dimensions and interpretation.
+- [Upload & Analyze API](/api-reference/upload-analyze) — full request/response and error details.

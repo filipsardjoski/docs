@@ -1,0 +1,39 @@
+---
+title: 'Overview'
+description: "Detect and interpret engagement, signals, and quality."
+---
+
+# Detect and interpret conversational behavior.
+
+Interhuman is the social intelligence API for developers to detect and interpret engagement state, social signals, and conversation quality in real-time or post-processing.
+
+## How to integrate
+
+<CardGroup cols={2}>
+  <Card
+    title="Analyze uploaded video"
+    icon="file-video"
+    href="/api-reference/upload-analyze"
+  >
+    Upload video files for comprehensive behavioral analysis.
+  </Card>
+  <Card
+    title="Stream Analysis"
+    icon="tower-broadcast"
+    href="/api-reference/stream-analyze"
+  >
+    Stream raw video data for real-time interpretation.
+  </Card>
+</CardGroup>
+
+## Capabilities
+
+The API provides access to multimodal models that produce:
+
+*   **Engagement State**: Time-bounded states such as engaged, disengaged, and neutral states.
+*   **Social Signals**: [Agreement, confusion, engagement, and more](/explanations/social-signals) with timing, probability, and rationale.
+*   **Conversation Quality**: Aggregate and timeline scores for energy, rapport, authority, learning, and clarity.
+
+## Authentication
+
+Use your API key directly when calling endpoints by sending `Authorization: Bearer <api_key>`. See [Authentication](/api-reference/authentication) and [Get an API key](/how-to/get-api-key).

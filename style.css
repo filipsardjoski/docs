@@ -1,0 +1,71 @@
+/* 
+  Interhuman AI Docs - Custom Styling 
+  Refer to mintlify-styling-guide.md for identifiers and selectors.
+*/
+
+/* Import JetBrains Mono from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap');
+
+:root {
+  --mint-color-background: #1A1A1A;
+  --mint-color-text: #E2E0DC;
+  --mint-token-keyword: #C181FF;
+  --mint-token-function: #A8FFFC;
+  --mint-token-string: #BBC49E;
+  --mint-token-constant: #E8B4F8;
+  --mint-token-comment: #757575;
+  --mint-token-parameter: #D4B8FF;
+  --mint-token-string-expression: #A8FFFC;
+  --mint-token-punctuation: #8A8880;
+  --mint-token-link: #C181FF;
+}
+
+/* 
+  Sidebar Group Titles & Eyebrows - Targeted
+  Applies JetBrains Mono and Uppercase specifically to sidebar headings and page eyebrows.
+*/
+.sidebar-title, 
+.group-title,
+#sidebar h5,
+div[class*="sidebar"] h5,
+.eyebrow,
+div[class*="eyebrow"] {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-weight: 500 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em; /* Optional: Adds readability to uppercase mono text */
+}
+
+/* Navbar Styling */
+#navbar {
+  /* Customize the top navigation bar if needed */
+}
+
+/* Sidebar Styling */
+#sidebar {
+  /* Styling for the sidebar */
+}
+
+/* Footer Styling */
+footer {
+  margin-top: 2rem;
+}
+
+/* 
+  Card Component Hover Effects - High Specificity Overrides
+  We use html/body selectors to beat Tailwind's !important utility classes if present.
+*/
+
+/* Light Mode */
+html:not(.dark) .card:hover,
+html:not(.dark) a[class*="card"]:hover {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  background-color: rgba(0, 0, 0, 0.02) !important;
+}
+
+/* Dark Mode */
+html.dark .card:hover,
+html.dark a[class*="card"]:hover {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}

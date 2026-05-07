@@ -1,0 +1,22 @@
+---
+title: Authentication
+---
+
+# Authentication
+
+Interhuman now supports direct API-key authentication for API requests.
+
+Use your API key in the `Authorization` header:
+
+```http
+Authorization: Bearer <api_key>
+```
+
+If you still need a key, start with [Get an API key](/how-to/get-api-key).
+
+## Migration from the legacy flow
+
+We migrated from a two-step authentication flow to a one-step flow:
+
+- **Legacy flow:** send `key_id` and `key_secret` to `/auth`, receive a short-lived token, then call API endpoints with that token.
+- **Current flow:** call API endpoints directly with your API key in `Authorization: Bearer <api_key>`.

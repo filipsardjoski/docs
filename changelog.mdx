@@ -1,0 +1,112 @@
+---
+title: "Changelog"
+description: "Product updates and announcements"
+---
+
+<Update label="v1.1.0" description="Authentication Simplification">
+  ### Direct API key authentication for requests
+
+  Interhuman now supports a simpler authentication path for API integrations.
+  You can send your API key directly in the `Authorization` header on requests, including `POST /v1/upload/analyze`.
+
+  #### Highlights
+
+  - **One-step auth for integrations:** call API endpoints directly with `Authorization: Bearer <api_key>`.
+  - **Lower setup overhead:** no required key exchange step before first upload request.
+  - **Backward compatible rollout:** legacy credentials and token-based authentication paths remain supported for existing clients.
+  - **Docs updated for the new default path:** quickstart, codealong, API key guide, and authentication docs now prioritize direct API-key usage.
+</Update>
+
+<Update label="v1.0.0" description="General Availability">
+  ### Interhuman V1 is live
+
+  Interhuman V1 is now generally available.
+  This release stabilizes the core integration path: authenticate, upload a video, and receive structured analysis with predictable error handling.
+
+  #### Highlights
+
+  - **Self-serve onboarding:** create an account and generate API keys directly at [platform.interhuman.ai](https://platform.interhuman.ai).
+  - **Stable API contract:** V1 authentication and upload-analysis flows are now stable for production use.
+  - **More reliable processing:** better handling across real-world video uploads with more consistent analysis completion.
+  - **Production-ready errors:** standardized error payloads (`error_id`, `correlation_id`, `link`, `message`) for faster debugging and stronger recovery logic.
+  - **Faster setup path:** refreshed quickstart and codealong docs to get from API key to first successful analysis faster.
+
+  #### Explore V1
+
+  - [Video upload quickstart](/getting-started/video-upload-quickstart)
+  - [Build a Video Analyzer App](/how-to/build-video-analyzer-app-codealong)
+  - [API overview](/api-reference/overview)
+  - [Error handling](/api-reference/error-handling)
+  - [V1 launch blog post](https://interhuman.ai/blog/introducing-inter-1)
+</Update>
+
+## v0.x releases
+
+<Update label="v0.2.0" description="Breaking Change">
+  ### Simplified Error Response Schema
+
+  We've removed the deprecated backward-compatibility fields from all error responses.
+
+  HTTP error responses no longer include `detail`, `status_code`, or `extra`. WebSocket error responses no longer include the `error` field. All error information is now exclusively in the canonical fields: `error_id`, `correlation_id`, `link`, and `message`.
+
+  If your client still reads the old fields, update it to use the canonical schema before upgrading. See the [error handling docs](/api-reference/error-handling) for the current format.
+
+</Update>
+
+<Update label="v0.1.6" description="Streaming Reliability">
+  ### Better Support for Browser WebM Streaming
+
+  We've improved how the realtime streaming API handles WebM video chunks produced by browser `MediaRecorder`.
+
+  Previously, when the browser sent fragmented WebM chunks, only the first chunk contained the initialization metadata needed for decoding. Later chunks could fail silently because they were missing that context.
+
+  The API now automatically detects and reuses the required WebM initialization segment for subsequent chunks within the same stream session. This makes fragmented browser streams decode reliably without requiring any client-side workaround.
+
+</Update>
+
+<Update label="v0.1.4" description="Error Handling">
+  ### Structured Interhuman error codes
+
+  We've **overhauled error handling** across the Interhuman API, introducing a structured, machine-readable error model that's an awesome way of doing error handling in production systems.
+
+  All HTTP and WebSocket error responses now use **Interhuman error codes**, with payloads that include `error_id`, `correlation_id`, `link`, and `message`. Failures are mapped to specific `ihxxx` codes that cover authentication, validation, media, quota, and realtime categories, making it much easier to programmatically react to and debug issues.
+
+  For backward compatibility, legacy error fields are still present for now while clients migrate to the new schema.
+
+  Learn more in the updated docs: [Error handling](/api-reference/error-handling).
+</Update>
+
+<Update label="v0.1.3" description="Improved">
+  ### More Reliable Video Segmentation
+
+  We've improved how video segments are handled during processing.
+
+  Previously, very small trailing segments could result in the final fraction of a second not being analyzed. These edge cases are now handled correctly, ensuring full coverage of the uploaded video.
+
+  This improves signal consistency for videos of arbitrary lengths.
+
+  ### Better Handling of Corrupt MP4 Uploads
+
+  Segments that contain a valid MP4 container but no actual media data are now detected before model processing.
+  
+  Instead of surfacing opaque upstream errors, the API now returns a clear `400 Bad Request` response with a helpful error message when corrupted or invalid video content is detected.
+
+  ### Improved Service Startup Reliability
+
+  We improved how service readiness is determined during deployment.
+
+  This prevents traffic from reaching an instance before it is fully initialized, reducing the likelihood of transient 5XX errors immediately after deployments or scaling events.
+</Update>
+
+<Update label="v0.1.2" description="Performance">
+  ### Performance Improvements
+
+  Improved processing performance for longer videos (greater than ~30 seconds). In internal testing, some workloads show processing time reductions of up to ~15%; actual improvements depend on video characteristics and system load.
+</Update>
+
+<Update label="v0.1.1" description="Bug Fix">
+  ### Bug Fixes
+
+  - Fixed an issue where some WebM video metadata caused the `/upload/analyze` endpoint to calculate negative video duration, resulting in empty array responses. This is now resolved, and future similar cases will return a 4XX or 5XX error with a corresponding error message.
+</Update>
+

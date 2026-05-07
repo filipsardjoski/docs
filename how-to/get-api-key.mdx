@@ -1,0 +1,85 @@
+---
+title: "Get an API key"
+description: "Create an Interhuman account and generate API keys from the platform."
+---
+
+Use [https://platform.interhuman.ai](https://platform.interhuman.ai) to create and manage your API keys.
+
+## New to Interhuman? Start here
+
+1. Go to [https://platform.interhuman.ai](https://platform.interhuman.ai).
+2. Sign up for a free account.
+3. Follow the onboarding steps and you will quickly get an API key. 
+
+## Already have an account? Create a key
+
+1. From the dashboard sidebar, open **API Keys**.
+
+<img
+  src="/assets/get-api-key/how-to-get-api-key-1-light.png"
+  alt="Dashboard with API Keys menu item highlighted"
+  className="block dark:hidden"
+/>
+<img
+  src="/assets/get-api-key/how-to-get-api-key-1-dark.png"
+  alt="Dashboard with API Keys menu item highlighted"
+  className="hidden dark:block"
+/>
+
+2. Click `+ Create API Key`.
+
+<img
+  src="/assets/get-api-key/how-to-get-api-key-2-light.png"
+  alt="API Keys page with + Create API Key highlighted"
+  className="block dark:hidden"
+/>
+<img
+  src="/assets/get-api-key/how-to-get-api-key-2-dark.png"
+  alt="API Keys page with + Create API Key highlighted"
+  className="hidden dark:block"
+/>
+
+3. Enter a name for your key and choose whether [Model Improvement Program](/explanations/model-improvement-program) is enabled.
+
+<img
+  src="/assets/get-api-key/how-to-get-api-key-3-light.png"
+  alt="Create API Key modal with name field and MIP toggle highlighted"
+  className="block dark:hidden"
+/>
+<img
+  src="/assets/get-api-key/how-to-get-api-key-3-dark.png"
+  alt="Create API Key modal with name field and MIP toggle highlighted"
+  className="hidden dark:block"
+/>
+
+4. Copy and securely store your generated credentials.
+
+<img
+  src="/assets/get-api-key/how-to-get-api-key-4-light.png"
+  alt="Generated API key and key ID shown after creation"
+  className="block dark:hidden"
+/>
+<img
+  src="/assets/get-api-key/how-to-get-api-key-4-dark.png"
+  alt="Generated API key and key ID shown after creation"
+  className="hidden dark:block"
+/>
+
+<Warning>
+Your API key is shown only once when the key is created. Store it in a secure secret manager immediately.
+</Warning>
+
+## Next: use your API key directly
+
+You can now use your API key directly when calling the API.
+
+```bash
+export API_KEY="YOUR_API_KEY"
+export VIDEO_PATH="path_to_your_video.mp4"
+
+curl -X POST https://api.interhuman.ai/v1/upload/analyze \
+  -H "Authorization: Bearer ${API_KEY}" \
+  -F "file=@${VIDEO_PATH};type=video/mp4"
+```
+
+Next step: [Upload & Analyze API](/api-reference/upload-analyze)

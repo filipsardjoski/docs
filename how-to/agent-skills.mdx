@@ -1,0 +1,89 @@
+---
+title: "Agent Skills"
+description: "Install and use Interhuman Agent Skills for direct API-key authentication and upload analysis."
+---
+
+# Agent Skills
+
+Interhuman Agent Skills are packaged capabilities that let AI coding agents call Interhuman API workflows directly.
+
+Use them to:
+
+- Authenticate requests with your API key
+- Analyze uploaded video files with optional conversation quality outputs
+
+## Install skills
+
+Install the Interhuman skill set:
+
+```bash
+npx skills add InterhumanAI/skills
+```
+
+You can also install from the full repository URL:
+
+```bash
+npx skills add https://github.com/InterhumanAI/skills
+```
+
+## Available Interhuman skills
+
+- `interhuman-post-processing` - Analyze pre-recorded files via `POST /v1/upload/analyze`.
+
+All skills are strict wrappers that return raw JSON from the Interhuman API.
+
+## Common install patterns
+
+List skills without installing:
+
+```bash
+npx skills add InterhumanAI/skills --list
+```
+
+Install specific skills only:
+
+```bash
+npx skills add InterhumanAI/skills --skill interhuman-post-processing
+```
+
+Install all skills from the repository:
+
+```bash
+npx skills add InterhumanAI/skills --skill '*'
+```
+
+Install globally for Cursor:
+
+```bash
+npx skills add InterhumanAI/skills -g -a cursor -y
+```
+
+## Recommended workflow
+
+1. Set your API key in your runtime environment.
+2. Use `interhuman-post-processing` for uploaded files.
+3. Parse the returned raw JSON in your app layer.
+
+## V1 request and response essentials
+
+### Authentication (direct API key)
+
+- Use your API key directly in the authorization header:
+  - `Authorization: Bearer <api_key>`
+- Set it in your shell or runtime:
+  - `export API_KEY="YOUR_API_KEY"`
+
+### Upload analysis (`POST /v1/upload/analyze`)
+
+- Send `multipart/form-data` with a required `file` field.
+- Optional `include[]` flags:
+  - `conversation_quality_overall`
+  - `conversation_quality_timeline`
+- Response always includes `signals`.
+- Response always includes `engagement_state`.
+- Response may include `conversation_quality` when requested via `include[]`.
+
+## Find more and verify listing
+
+- Skills directory listing: [skills.sh/interhumanai/skills](https://skills.sh/interhumanai/skills)
+- Source repository: [github.com/InterhumanAI/skills](https://github.com/InterhumanAI/skills)

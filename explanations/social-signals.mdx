@@ -1,0 +1,76 @@
+---
+title: Social signals
+description: Understand each social signal detected by the Interhuman API.
+---
+
+The Interhuman API returns two related but distinct behavioral outputs:
+
+- `engagement_state`: the person’s attention level to the interaction at a given moment, expressed as engagement, disengagement, or neutral
+- `signals`: specific social behaviors detected in the interaction, such as hesitation, agreement, confusion, etc.
+
+Use these outputs to adapt your application's responses, route conversations, or score interaction quality without manual labeling.
+
+## Probability and Rationale
+
+Alongside the signal label and its timestamps, Inter-1 will also return **`probability`** and **`rationale`**.  
+
+- `signals[].probability` is a simple likelihood rating (`low` | `medium` | `high`). It helps you judge how reliable a detection is and decide how to use it (for example, you might only act on `high` signals, or show `low` signals as a “maybe”).
+- `signals[].rationale` is a short explanation of *what the model noticed* (in video, audio, and text) and how it connects to the signal. It’s designed to be human-readable, so you can quickly sanity-check the detection and understand what drove it.
+
+## Engagement state
+
+These values belong to `engagement_state[].state` and are separate from `signals[].type`.
+
+### Engaged
+
+Engaged reflects sustained focus and active participation in the interaction. An engaged person maintains eye contact, sits upright or leans forward, offers timely nods and short backchannels like "mm-hmm" or "I see," and keeps their body oriented toward the speaker. They might ask brief, task-focused questions that show they are following along.
+
+### Disengaged
+
+Disengaged signals a reduction in attention, involvement, or investment in the interaction. A disengaged person appears mentally or emotionally withdrawn, contributes minimally, and shows limited responsiveness to what is happening. This often indicates that the interaction no longer feels relevant or worth sustained effort.
+
+### Neutral
+
+Neutral reflects a baseline state where a participant is present and following along without strong positive or negative engagement markers. It often appears between more pronounced shifts toward engaged or disengaged behavior.
+
+## Social signals (10 types)
+
+## Agreement
+
+Agreement reflects alignment with another person's position, intent, or understanding. It appears when someone signals that they are on the same page and moving in the same direction as the speaker. This can take the form of affirming responses or moments where the listener reinforces or builds on what has just been said, indicating shared understanding.
+
+## Confidence
+
+Confidence captures how firmly and assuredly someone communicates their position or decision. A confident person presents ideas with clarity and conviction, without excessive qualification or visible doubt. Their delivery suggests comfort with the stance they are taking and readiness to stand behind it.
+
+## Confusion
+
+Confusion indicates a breakdown or gap in understanding during an interaction. It emerges when someone struggles to follow the content, structure, or implications of what is being discussed. This state often leads to pauses, clarification attempts, or visible effort to reorient and regain clarity.
+
+## Disagreement
+
+Disagreement reflects an active divergence from another person's viewpoint or proposal. It arises when someone challenges, rejects, or pushes back against what is being presented. Rather than passive misalignment, disagreement involves a clear stance that the current direction or claim is not accepted.
+
+## Frustration
+
+Frustration emerges when progress toward a goal feels blocked or repeatedly unsuccessful. It reflects mounting tension or irritation as expectations are unmet. This state is often associated with a sense of effort without payoff and can precede disengagement or escalation if unresolved.
+
+## Hesitation
+
+Hesitation captures uncertainty or delay before committing to a response or action. It reflects moments where someone is weighing options, searching for the right wording, or holding back before moving forward. Hesitation often signals that a decision or stance is not yet fully formed.
+
+## Interest
+
+Interest reflects positive engagement driven by relevance or curiosity. An interested person appears drawn into the topic and motivated to continue the exchange. This state is marked by attentiveness and signals that the content resonates or holds value for them.
+
+## Skepticism
+
+Skepticism represents a questioning or doubtful stance toward a claim, proposal, or explanation. Rather than outright rejection, it involves cautious evaluation and a desire for justification or evidence. Skepticism often surfaces when information conflicts with prior beliefs or seems insufficiently supported.
+
+## Stress
+
+Stress indicates heightened pressure or cognitive load during an interaction. It reflects a state where demands feel intense, time-sensitive, or difficult to manage. Under stress, people may prioritize speed or coping over depth, signaling strain rather than deliberate engagement.
+
+## Uncertainty
+
+Uncertainty reflects low confidence in one's own knowledge, judgment, or decision. It appears when someone is unsure about the correctness or appropriateness of what they are saying or choosing. This state often involves tentative positioning and openness to revision or guidance.

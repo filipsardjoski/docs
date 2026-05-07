@@ -1,0 +1,724 @@
+asyncapi: 3.0.0
+info:
+  title: interhuman-api
+  version: 1.2.16
+  description: ''
+servers:
+  production:
+    host: api.interhuman.ai
+    protocol: ws
+channels:
+  stream_analyze:
+    address: /v0/stream/analyze
+    title: stream_analyze
+    description: Analyze a video stream.
+    messages:
+      stream_completion_message:
+        $ref: '#/components/messages/stream_completion_message'
+      stream_error_message:
+        $ref: '#/components/messages/stream_error_message'
+      stream_processing_message:
+        $ref: '#/components/messages/stream_processing_message'
+      stream_result_message:
+        $ref: '#/components/messages/stream_result_message'
+      stream_video_message:
+        $ref: '#/components/messages/stream_video_message'
+    bindings:
+      ws:
+        bindingVersion: 0.1.0
+        headers:
+          type: object
+          properties:
+            X-Client-Request-Id:
+              type: string
+              description: Optional identifier supplied by the client to correlate
+                this request with their own logs. When provided, the value is recorded
+                alongside the server-assigned correlation ID in Interhuman logs to
+                aid lookup and support investigations. This header is not echoed back
+                in the response; the server returns its own correlation ID in the
+                `X-Correlation-ID` HTTP response header.
+            sec-websocket-protocol:
+              type: string
+              description: Authentication credential supplied during the WebSocket
+                handshake. Pass your API key here when your client cannot set an `Authorization`
+                header for WebSocket connections.
+              examples:
+              - <api_key>
+  stream_analyze_v1:
+    address: /v1/stream/analyze
+    title: stream_analyze_v1
+    description: Analyze a video stream.
+    messages:
+      stream_completion_message:
+        $ref: '#/components/messages/stream_completion_message'
+      stream_error_message:
+        $ref: '#/components/messages/stream_error_message'
+      stream_processing_message:
+        $ref: '#/components/messages/stream_processing_message'
+      stream_result_message:
+        $ref: '#/components/messages/stream_result_message'
+      stream_video_message:
+        $ref: '#/components/messages/stream_video_message'
+    bindings:
+      ws:
+        bindingVersion: 0.1.0
+        headers:
+          type: object
+          properties:
+            X-Client-Request-Id:
+              type: string
+              description: Optional identifier supplied by the client to correlate
+                this request with their own logs. When provided, the value is recorded
+                alongside the server-assigned correlation ID in Interhuman logs to
+                aid lookup and support investigations. This header is not echoed back
+                in the response; the server returns its own correlation ID in the
+                `X-Correlation-ID` HTTP response header.
+            sec-websocket-protocol:
+              type: string
+              description: Authentication credential supplied during the WebSocket
+                handshake. Pass your API key here when your client cannot set an `Authorization`
+                header for WebSocket connections.
+              examples:
+              - <api_key>
+operations:
+  receive_handler:
+    action: receive
+    channel:
+      $ref: '#/channels/stream_analyze'
+    description: ''
+    summary: ''
+    messages:
+    - $ref: '#/channels/stream_analyze/messages/stream_video_message'
+  output_analysis:
+    action: send
+    channel:
+      $ref: '#/channels/stream_analyze'
+    description: Contains the results of the analysis for the current segment. ``signals``
+      and ``engagement_state`` cover this segment only; ``conversation_quality`` is
+      computed over every segment processed so far in the session and is only emitted
+      when the client opts in via the ``include[]`` query parameter at WebSocket connect
+      (``include[]=conversation_quality_overall`` and/or ``include[]=conversation_quality_timeline``).
+    summary: Result Message
+    messages:
+    - $ref: '#/channels/stream_analyze/messages/stream_result_message'
+  output_completion:
+    action: send
+    channel:
+      $ref: '#/channels/stream_analyze'
+    description: Indicates that processing for the video segment has completed.
+    summary: Completion Message
+    messages:
+    - $ref: '#/channels/stream_analyze/messages/stream_completion_message'
+  output_error:
+    action: send
+    channel:
+      $ref: '#/channels/stream_analyze'
+    description: Indicates the operation failed and processing for this specific video
+      segment has ceased without further updates.
+    summary: Error Message
+    messages:
+    - $ref: '#/channels/stream_analyze/messages/stream_error_message'
+  output_processing:
+    action: send
+    channel:
+      $ref: '#/channels/stream_analyze'
+    description: Indicates that the video segment has been received and analysis is
+      in progress.
+    summary: Processing Message
+    messages:
+    - $ref: '#/channels/stream_analyze/messages/stream_processing_message'
+  v1_stream_receive_handler:
+    action: receive
+    channel:
+      $ref: '#/channels/stream_analyze_v1'
+    description: ''
+    summary: ''
+    messages:
+    - $ref: '#/channels/stream_analyze_v1/messages/stream_video_message'
+  v1_stream_output_analysis:
+    action: send
+    channel:
+      $ref: '#/channels/stream_analyze_v1'
+    description: Contains the results of the analysis for the current segment. ``signals``
+      and ``engagement_state`` cover this segment only; ``conversation_quality`` is
+      computed over every segment processed so far in the session and is only emitted
+      when the client opts in via the ``include[]`` query parameter at WebSocket connect
+      (``include[]=conversation_quality_overall`` and/or ``include[]=conversation_quality_timeline``).
+    summary: Result Message
+    messages:
+    - $ref: '#/channels/stream_analyze_v1/messages/stream_result_message'
+  v1_stream_output_completion:
+    action: send
+    channel:
+      $ref: '#/channels/stream_analyze_v1'
+    description: Indicates that processing for the video segment has completed.
+    summary: Completion Message
+    messages:
+    - $ref: '#/channels/stream_analyze_v1/messages/stream_completion_message'
+  v1_stream_output_error:
+    action: send
+    channel:
+      $ref: '#/channels/stream_analyze_v1'
+    description: Indicates the operation failed and processing for this specific video
+      segment has ceased without further updates.
+    summary: Error Message
+    messages:
+    - $ref: '#/channels/stream_analyze_v1/messages/stream_error_message'
+  v1_stream_output_processing:
+    action: send
+    channel:
+      $ref: '#/channels/stream_analyze_v1'
+    description: Indicates that the video segment has been received and analysis is
+      in progress.
+    summary: Processing Message
+    messages:
+    - $ref: '#/channels/stream_analyze_v1/messages/stream_processing_message'
+components:
+  messages:
+    stream_completion_message:
+      payload:
+        $ref: '#/components/schemas/StreamCompletionMessage'
+      title: Completion Message
+      description: Indicates that processing for the video segment has completed.
+      examples:
+      - name: Completion Message
+        payload:
+          status: completed
+          segment: 2
+          correlation_id: 550e8400-e29b-41d4-a716-446655440000
+    stream_error_message:
+      payload:
+        $ref: '#/components/schemas/StreamErrorMessage'
+      title: Error Message
+      description: Indicates the operation failed and processing for this specific
+        video segment has ceased without further updates.
+      examples:
+      - name: Error Message
+        payload:
+          status: error
+          segment: 2
+          correlation_id: 550e8400-e29b-41d4-a716-446655440000
+          error_id: ih6002
+          link: https://docs.interhuman.ai/api-reference/error-handling#ih6002-message-too-large
+          message: WebSocket message too large. Individual video chunks must not exceed
+            32 MB.
+    stream_processing_message:
+      payload:
+        $ref: '#/components/schemas/StreamProcessingMessage'
+      title: Processing Message
+      description: Indicates that the video segment has been received and analysis
+        is in progress.
+      examples:
+      - name: Processing Message
+        payload:
+          status: processing
+          segment: 2
+          correlation_id: 550e8400-e29b-41d4-a716-446655440000
+          bytes: 1200000
+    stream_result_message:
+      payload:
+        $ref: '#/components/schemas/StreamResultMessage'
+      title: Result Message
+      description: Contains the results of the analysis for the current segment. ``signals``
+        and ``engagement_state`` cover this segment only; ``conversation_quality``
+        is computed over every segment processed so far in the session and is only
+        emitted when the client opts in via the ``include[]`` query parameter at WebSocket
+        connect (``include[]=conversation_quality_overall`` and/or ``include[]=conversation_quality_timeline``).
+      examples:
+      - name: Result Message
+        payload:
+          status: result
+          segment: 2
+          correlation_id: 550e8400-e29b-41d4-a716-446655440000
+          signals:
+          - type: agreement
+            start: 5.0
+            end: 10.0
+            probability: high
+            rationale: Subject nodded repeatedly while maintaining eye contact.
+          - type: confidence
+            start: 5.0
+            end: 10.0
+            probability: medium
+            rationale: Steady voice with minimal hesitation.
+          engagement_state:
+          - start: 5.0
+            end: 10.0
+            state: engaged
+          conversation_quality:
+            overall:
+              quality_index: 72.0
+              clarity: 67.0
+              authority: 68.0
+              energy: 80.0
+              rapport: 75.0
+              learning: 70.0
+            timeline:
+            - start: 5.0
+              end: 10.0
+              values:
+                quality_index: 74.0
+                clarity: 67.0
+                authority: 71.0
+                energy: 82.0
+                rapport: 77.0
+                learning: 72.0
+    stream_video_message:
+      title: video (bytes)
+      summary: 'Binary video segment sent by the client for analysis. Each segment
+        must be at least 3 seconds long and must not exceed 32MB. Accepts the following
+        formats: mp4, avi, mov, mkv, mpeg-ts, mpeg-2-ts, webm.'
+      payload:
+        format: binary
+      examples:
+      - name: Video Message
+        payload: []
+  schemas:
+    ConversationQuality:
+      description: 'Conversation quality Index with optional overall and time-varying
+        scores.
+
+
+        Use the Include flags in the request to control which conversation quality
+
+        sections are included in the response.'
+      properties:
+        overall:
+          $ref: '#/components/schemas/ConversationQualityValues'
+          title: Overall
+          description: Aggregated conversation quality scores for the entire conversation.
+            Added when `conversation_quality_overall` is included in the Include flags.
+        timeline:
+          description: Time-varying conversation quality scores in consecutive, non-overlapping
+            windows. Added when `conversation_quality_timeline` is included in the
+            Include flags.
+          items:
+            $ref: '#/components/schemas/ConversationQualityTimelineEntry'
+          title: Timeline
+          type: array
+      required:
+      - overall
+      - timeline
+      title: ConversationQuality
+      type: object
+    ConversationQualityTimelineEntry:
+      description: Conversation quality values for a single time window in the timeline.
+      properties:
+        start:
+          description: Window start time in seconds.
+          examples:
+          - 0.0
+          title: Start Time
+          type: number
+        end:
+          description: Window end time in seconds.
+          examples:
+          - 10.0
+          title: End Time
+          type: number
+        values:
+          $ref: '#/components/schemas/ConversationQualityValues'
+          description: Conversation quality dimension scores for this time window.
+          title: Values
+      required:
+      - start
+      - end
+      - values
+      title: ConversationQualityTimelineEntry
+      type: object
+    ConversationQualityValues:
+      description: 'Aggregated conversation quality scores for the entire conversation.
+
+
+        Added when `conversation_quality_overall` is included in the Include flags.'
+      properties:
+        quality_index:
+          description: Overall conversation quality index (0-100). Mean of the five
+            dimension scores.
+          examples:
+          - 72.0
+          title: Quality Index
+          type: number
+        clarity:
+          description: Clarity / Structure dimension score (0-100). Returns 50 when
+            no diagnostic evidence is available for this dimension.
+          examples:
+          - 67.0
+          title: Clarity
+          type: number
+        authority:
+          description: Authority / Credibility dimension score (0-100). Returns 50
+            when no diagnostic evidence is available for this dimension.
+          examples:
+          - 68.0
+          title: Authority
+          type: number
+        energy:
+          description: Energy / Presence dimension score (0-100). Returns 50 when
+            no diagnostic evidence is available for this dimension.
+          examples:
+          - 80.0
+          title: Energy
+          type: number
+        rapport:
+          description: Rapport / Relational Safety dimension score (0-100). Returns
+            50 when no diagnostic evidence is available for this dimension.
+          examples:
+          - 75.0
+          title: Rapport
+          type: number
+        learning:
+          description: Learning / Exploration dimension score (0-100). Returns 50
+            when no diagnostic evidence is available for this dimension.
+          examples:
+          - 70.0
+          title: Learning
+          type: number
+      required:
+      - quality_index
+      - clarity
+      - authority
+      - energy
+      - rapport
+      - learning
+      title: ConversationQualityValues
+      type: object
+    EngagementLevel:
+      description: Engagement state levels derived from model signals.
+      enum:
+      - engaged
+      - neutral
+      - disengaged
+      title: EngagementLevel
+      type: string
+    EngagementStateEntry:
+      description: A contiguous time window with a single engagement state.
+      properties:
+        state:
+          $ref: '#/components/schemas/EngagementLevel'
+          description: The engagement level for this time window.
+          examples:
+          - engaged
+          title: State
+        start:
+          description: Start time in seconds relative to the video start.
+          examples:
+          - 0.0
+          title: Start Time
+          type: number
+        end:
+          description: End time in seconds relative to the video start.
+          examples:
+          - 5.0
+          title: End Time
+          type: number
+      required:
+      - state
+      - start
+      - end
+      title: EngagementStateEntry
+      type: object
+    Probability:
+      description: Signal probability levels.
+      enum:
+      - high
+      - medium
+      - low
+      title: Probability
+      type: string
+    Signal:
+      description: Detected signal.
+      properties:
+        type:
+          $ref: '#/components/schemas/SignalType'
+          description: The name of the detected social signal (e.g., 'agreement',
+            'confusion').
+          examples:
+          - agreement
+          title: Signal Type
+        start:
+          description: Start time of the signal in seconds relative to the video start.
+          examples:
+          - 10.0
+          title: Start Time
+          type: number
+        end:
+          description: End time of the signal in seconds relative to the video start.
+          examples:
+          - 15.0
+          title: End Time
+          type: number
+        probability:
+          description: 'Confidence level of the detected signal: high, medium, or
+            low.'
+          examples:
+          - high
+          title: Probability
+          $ref: '#/components/schemas/Probability'
+        rationale:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: A concise, evidence-based explanation of why the signal was
+            detected. Grounded in observable cues from the video.
+          examples:
+          - Subject nodded repeatedly while maintaining eye contact.
+          title: Rationale
+      required:
+      - type
+      - start
+      - end
+      title: Signal
+      type: object
+    SignalType:
+      description: Enumeration of supported social signals.
+      enum:
+      - agreement
+      - confidence
+      - confusion
+      - disagreement
+      - disengagement
+      - engagement
+      - frustration
+      - hesitation
+      - interest
+      - skepticism
+      - stress
+      - uncertainty
+      title: SignalType
+      type: string
+    StreamCompletionMessage:
+      description: Message for stream completion status.
+      properties:
+        status:
+          description: Identifies the message type. For completion messages, this
+            field is always set to 'completed'.
+          title: Status
+          type: string
+        segment:
+          description: The segment number associated with this message.
+          title: Segment
+          type: integer
+        correlation_id:
+          default: ''
+          description: Unique identifier assigned to each API request or WebSocket
+            connection. It allows both the client and the service to trace a specific
+            interaction through logs and internal systems. If you contact support
+            about a particular request or connection, providing the correlation_id
+            allows the team to locate the relevant records quickly. Clients who may
+            later request deletion of data for privacy reasons should store the correlation_id,
+            as it can be used to identify and remove data associated with that specific
+            interaction.
+          title: Correlation Id
+          type: string
+      required:
+      - status
+      - segment
+      - payload
+      title: StreamCompletionMessage
+      type: object
+    StreamErrorMessage:
+      description: Error response for WebSocket connections, matching the canonical
+        HTTP ErrorResponse.
+      properties:
+        status:
+          description: Identifies the message type. For error messages, this field
+            is always set to 'error'.
+          title: Status
+          type: string
+        segment:
+          description: The segment number associated with this message.
+          title: Segment
+          type: integer
+        correlation_id:
+          default: ''
+          description: Unique identifier assigned to each API request or WebSocket
+            connection. It allows both the client and the service to trace a specific
+            interaction through logs and internal systems. If you contact support
+            about a particular request or connection, providing the correlation_id
+            allows the team to locate the relevant records quickly. Clients who may
+            later request deletion of data for privacy reasons should store the correlation_id,
+            as it can be used to identify and remove data associated with that specific
+            interaction.
+          title: Correlation Id
+          type: string
+        error_id:
+          default: ''
+          description: Machine-readable error code (e.g. 'ih2001').
+          title: Error Id
+          type: string
+        link:
+          default: ''
+          description: URL to additional information about this error.
+          title: Link
+          type: string
+        message:
+          default: ''
+          description: Error explanation. Contains any additional details about the
+            specific error that was encountered.
+          title: Message
+          type: string
+      required:
+      - status
+      - segment
+      - payload
+      title: StreamErrorMessage
+      type: object
+    StreamProcessingMessage:
+      description: Message for stream processing status.
+      properties:
+        status:
+          description: Identifies the message type. For processing messages, this
+            field is always set to 'processing'.
+          title: Status
+          type: string
+        segment:
+          description: The segment number associated with this message.
+          title: Segment
+          type: integer
+        correlation_id:
+          default: ''
+          description: Unique identifier assigned to each API request or WebSocket
+            connection. It allows both the client and the service to trace a specific
+            interaction through logs and internal systems. If you contact support
+            about a particular request or connection, providing the correlation_id
+            allows the team to locate the relevant records quickly. Clients who may
+            later request deletion of data for privacy reasons should store the correlation_id,
+            as it can be used to identify and remove data associated with that specific
+            interaction.
+          title: Correlation Id
+          type: string
+        bytes:
+          description: The number of segment bytes received for processing.
+          title: Bytes
+          type: integer
+      required:
+      - status
+      - segment
+      - bytes
+      - payload
+      title: StreamProcessingMessage
+      type: object
+    StreamResultMessage:
+      description: Message for stream result status.
+      properties:
+        signals:
+          description: List of all social signals detected in the analyzed video.
+          examples:
+          - - end: 10.0
+              probability: high
+              rationale: Subject nodded repeatedly while maintaining eye contact.
+              start: 0.0
+              type: agreement
+            - end: 15.0
+              probability: medium
+              rationale: Steady voice with minimal hesitation.
+              start: 5.0
+              type: confidence
+          items:
+            $ref: '#/components/schemas/Signal'
+          title: Signals
+          type: array
+        engagement_state:
+          description: 'Time-varying engagement state derived from detected engagement
+            signals. Each entry covers a contiguous time window with a single state:
+            ''engaged'' when engagement is detected, ''disengaged'' when disengagement
+            is detected, ''neutral'' otherwise.'
+          examples:
+          - - end: 5.0
+              start: 0.0
+              state: engaged
+            - end: 15.0
+              start: 5.0
+              state: neutral
+          items:
+            $ref: '#/components/schemas/EngagementStateEntry'
+          title: Engagement State
+          type: array
+        conversation_quality:
+          description: Conversation quality with overall and time-varying scores.
+            Present only when explicitly requested via the include[] parameter and
+            the video contains at least one detected signal. When present, every dimension
+            score and the overall quality index are guaranteed to be numeric (50 indicates
+            no diagnostic evidence for that dimension).
+          examples:
+          - overall:
+              authority: 68.0
+              clarity: 67.0
+              energy: 80.0
+              learning: 70.0
+              quality_index: 72.0
+              rapport: 75.0
+            timeline:
+            - end: 10.0
+              start: 0.0
+              values:
+                authority: 70.0
+                clarity: 69.0
+                energy: 78.0
+                learning: 68.0
+                quality_index: 70.0
+                rapport: 77.0
+            - end: 20.0
+              start: 10.0
+              values:
+                authority: 65.0
+                clarity: 65.0
+                energy: 82.0
+                learning: 72.0
+                quality_index: 74.0
+                rapport: 73.0
+          title: Conversation Quality
+          $ref: '#/components/schemas/ConversationQuality'
+        status:
+          description: Identifies the message type. For result messages, this field
+            is always set to 'result'.
+          title: Status
+          type: string
+        segment:
+          description: The segment number associated with this message.
+          title: Segment
+          type: integer
+        correlation_id:
+          default: ''
+          description: Unique identifier assigned to each API request or WebSocket
+            connection. It allows both the client and the service to trace a specific
+            interaction through logs and internal systems. If you contact support
+            about a particular request or connection, providing the correlation_id
+            allows the team to locate the relevant records quickly. Clients who may
+            later request deletion of data for privacy reasons should store the correlation_id,
+            as it can be used to identify and remove data associated with that specific
+            interaction.
+          title: Correlation Id
+          type: string
+      required:
+      - signals
+      - status
+      - segment
+      - payload
+      title: StreamResultMessage
+      type: object
+    StreamVideoMessage:
+      description: Message for streaming video.
+      properties:
+        action:
+          const: stream_video
+          default: stream_video
+          title: Action
+          type: string
+        payload:
+          title: Payload
+        bytes:
+          title: Bytes
+          type: integer
+      required:
+      - payload
+      - bytes
+      title: StreamVideoMessage
+      type: object
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API key authentication. Include your API key in the Authorization
+        header as 'Bearer <api_key>'.

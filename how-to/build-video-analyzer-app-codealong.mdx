@@ -1,0 +1,109 @@
+---
+title: "Build a Video Analyzer App"
+description: "Follow a step-by-step video tutorial to build a simple video analyzer app using Interhuman's upload analysis API."
+---
+
+Build a small app that uploads a video from your computer to Interhuman and returns structured analysis results.
+
+In this codealong, you will:
+
+- upload a local video to `POST /v1/upload/analyze`
+- optionally request conversation-quality outputs
+- render returned `signals[]` (including per-signal `rationale`) and quality metrics in your UI
+
+This page is written so you can follow the build without the video, while the video helps with pacing and implementation details.
+
+## Watch the codealong video
+
+<div style={{ position: "relative", paddingBottom: "56.25%", height: 0, marginBottom: "1.5rem" }}>
+  <iframe
+    src="https://www.youtube.com/embed/RTOhpJjGHOU"
+    title="Build a Video Analyzer App (Interhuman codealong)"
+    style={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      border: 0,
+      borderRadius: "12px",
+    }}
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowFullScreen
+  />
+</div>
+
+Keep the video and your editor side by side; pause after each major step.
+
+<Note>
+The embedded YouTube codealong shows the legacy token-exchange flow. Follow this document for the current integration path: use your API key directly in `Authorization: Bearer <api_key>`.
+</Note>
+
+Reference implementation: [interhuman-video-analyzer-codealong on GitHub](https://github.com/InterhumanAI/interhuman-video-analyzer-codealong)
+
+## Build steps
+
+### 1) Prepare credentials and auth
+
+Before calling upload, make sure you have an API key from [platform.interhuman.ai](https://platform.interhuman.ai). If needed, follow [Get an API key](/how-to/get-api-key).
+
+### 2) Add a simple file-upload UI
+
+Create a minimal UI with:
+
+- a file input that accepts a local video file
+- an `Analyze` button
+- a results panel (for JSON output or parsed cards)
+
+For this codealong, keep it simple. A plain HTML input and a single action button are enough to validate your integration end to end.
+
+### 3) Call Upload & Analyze
+
+When the user clicks `Analyze`, send the selected file to:
+
+- `POST /v1/upload/analyze`
+- with `Authorization: Bearer <api_key>`
+- as multipart form data (`file`)
+
+Reference: [Upload & Analyze API](/api-reference/upload-analyze)
+
+### 4) Optionally include conversation quality
+
+You can request conversation-quality outputs with include flags:
+
+- `conversation_quality_overall`
+- `conversation_quality_timeline`
+
+If included, the API returns conversation quality both as a single overall view and as timeline windows.
+
+References:
+
+- [Upload & Analyze API](/api-reference/upload-analyze)
+- [Conversation quality explanation](/explanations/conversation-quality)
+
+### 5) Render results in the app
+
+Once processing completes, render the response in your results panel.
+
+At minimum, show:
+
+- `signals[]` entries (`type`, `start`, `end`, `probability`, `rationale`)
+- optional `conversation_quality.overall`
+- optional `conversation_quality.timeline[]`
+
+This gives users both event-level insight (what happened and why) and quality-level insight (how the interaction performed across time).
+
+## What to inspect in the response
+
+- **Signal timing**: `start`/`end` are in seconds from the beginning of the uploaded video.
+- **Probability**: confidence bucket for each detected signal.
+- **Rationale**: a structured explanation of observed behavior (for example speech pauses, tone shifts, gaze, and pacing cues).
+- **Conversation quality**: overall plus core dimensions (`quality_index`, `energy`, `rapport`, `authority`, `learning`, `clarity`), and optionally a timeline that shows change over time.
+
+## Next steps
+
+- [Video Analysis quickstart](/getting-started/video-upload-quickstart) — complete request/response examples.
+- [Social signals](/explanations/social-signals) — what each signal means and when it appears.
+- [Conversation quality](/explanations/conversation-quality) — how quality dimensions are defined.
+- [Upload & Analyze API](/api-reference/upload-analyze) — endpoint details and production-level behavior.
+- Join the community: [community.interhuman.ai](http://community.interhuman.ai/)

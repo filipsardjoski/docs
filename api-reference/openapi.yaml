@@ -1,0 +1,566 @@
+openapi: 3.1.0
+info:
+  title: interhuman-api
+  version: 1.2.16
+servers:
+- url: https://api.interhuman.ai
+  description: Production environment
+paths:
+  /v1/upload/analyze:
+    post:
+      summary: Analyze Upload
+      description: Analyze a video file in upload mode.
+      operationId: analyze_upload_v1_upload_analyze_post
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_analyze_upload_v1_upload_analyze_post'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisResult'
+              example:
+                signals:
+                - type: agreement
+                  start: 0.0
+                  end: 10.0
+                  probability: high
+                  rationale: Subject nodded repeatedly while maintaining eye contact.
+                - type: confidence
+                  start: 5.0
+                  end: 15.0
+                  probability: medium
+                  rationale: Steady voice with minimal hesitation.
+                engagement_state:
+                - start: 0.0
+                  end: 5.0
+                  state: engaged
+                - start: 5.0
+                  end: 15.0
+                  state: neutral
+                conversation_quality:
+                  overall:
+                    quality_index: 72.0
+                    clarity: 67.0
+                    authority: 68.0
+                    energy: 80.0
+                    rapport: 75.0
+                    learning: 70.0
+                  timeline:
+                  - start: 0.0
+                    end: 10.0
+                    values:
+                      quality_index: 70.0
+                      clarity: 69.0
+                      authority: 70.0
+                      energy: 78.0
+                      rapport: 77.0
+                      learning: 68.0
+                  - start: 10.0
+                    end: 20.0
+                    values:
+                      quality_index: 74.0
+                      clarity: 65.0
+                      authority: 65.0
+                      energy: 82.0
+                      rapport: 73.0
+                      learning: 72.0
+        '400':
+          description: Bad request. The video file is missing (ih4001), too short
+            (ih4007), or a request parameter is invalid (ih4005).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error_id: ih4001
+                correlation_id: 550e8400-e29b-41d4-a716-446655440000
+                link: https://docs.interhuman.ai/api-reference/error-handling#ih4001-missing-video-file
+                message: No video file provided. Include the video as a multipart/form-data
+                  field named 'file'.
+        '401':
+          description: Unauthorized. The API key is missing (ih2002) or the credentials
+            are invalid (ih2001).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error_id: ih2002
+                correlation_id: 550e8400-e29b-41d4-a716-446655440000
+                link: https://docs.interhuman.ai/api-reference/error-handling#ih2002-missing-credentials
+                message: 'No authentication credentials were provided. Include your
+                  API key in the ''Authorization: Bearer <api_key>'' header (or in
+                  the ''sec-websocket-protocol'' header for WebSocket connections).'
+        '403':
+          description: Forbidden. The API key does not include the required scope
+            (ih2003).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error_id: ih2003
+                correlation_id: 550e8400-e29b-41d4-a716-446655440000
+                link: https://docs.interhuman.ai/api-reference/error-handling#ih2003-insufficient-scope
+                message: Insufficient scope. This endpoint requires the 'interhumanai.upload'
+                  scope.
+        '413':
+          description: Payload too large. The video file exceeds the maximum upload
+            size (ih4003).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error_id: ih4003
+                correlation_id: 550e8400-e29b-41d4-a716-446655440000
+                link: https://docs.interhuman.ai/api-reference/error-handling#ih4003-file-too-large
+                message: Payload too large. The video file must not exceed 32.0 MB.
+        '422':
+          description: Unprocessable video. The file is empty (ih5001), corrupted
+            (ih5002), uses an unsupported codec (ih5003), has a malformed segment
+            (ih5004), exceeds segment size limits (ih5005), contains a segment that
+            is too short (ih5006), or was rejected by the model (ih5007).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error_id: ih5001
+                correlation_id: 550e8400-e29b-41d4-a716-446655440000
+                link: https://docs.interhuman.ai/api-reference/error-handling#ih5001-empty-video
+                message: 'Unable to process the video: the file appears to be empty
+                  or contains no video content.'
+        '429':
+          description: Too many requests or quota exceeded. The client has exceeded
+            the rate limit (ih3001) or the account has reached its usage limit (ih3003).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                rate_limit:
+                  summary: Rate limit exceeded
+                  value:
+                    error_id: ih3001
+                    correlation_id: 550e8400-e29b-41d4-a716-446655440000
+                    link: https://docs.interhuman.ai/api-reference/error-handling#ih3001-rate-limit-exceeded
+                    message: Rate limit exceeded. You have sent too many requests.
+                      Please wait 60 seconds before retrying.
+                quota_exceeded:
+                  summary: Quota exceeded
+                  value:
+                    error_id: ih3003
+                    correlation_id: 550e8400-e29b-41d4-a716-446655440000
+                    link: https://docs.interhuman.ai/api-reference/error-handling#ih3003-quota-exceeded
+                    message: Quota exceeded. Your account has reached its usage limit.
+                      Contact support to upgrade your plan, add credits, or wait for
+                      the quota to reset.
+        '500':
+          description: Internal server error (ih1001) or the upstream AI service is
+            temporarily unavailable (ih1002).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error_id: ih1001
+                correlation_id: 550e8400-e29b-41d4-a716-446655440000
+                link: https://docs.interhuman.ai/api-reference/error-handling#ih1001-internal-server-error
+                message: Internal server error. Please try again or contact support
+                  if the problem persists.
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: X-Client-Request-Id
+        in: header
+        required: false
+        description: Optional identifier supplied by the client to correlate this
+          request with their own logs. When provided, the value is recorded alongside
+          the server-assigned correlation ID in Interhuman logs to aid lookup and
+          support investigations. This header is not echoed back in the response;
+          the server returns its own correlation ID in the `X-Correlation-ID` HTTP
+          response header.
+        schema:
+          type: string
+          title: X-Client-Request-Id
+components:
+  schemas:
+    AnalysisResult:
+      properties:
+        signals:
+          items:
+            $ref: '#/components/schemas/Signal'
+          type: array
+          title: Signals
+          description: List of all social signals detected in the analyzed video.
+          examples:
+          - - end: 10.0
+              probability: high
+              rationale: Subject nodded repeatedly while maintaining eye contact.
+              start: 0.0
+              type: agreement
+            - end: 15.0
+              probability: medium
+              rationale: Steady voice with minimal hesitation.
+              start: 5.0
+              type: confidence
+        engagement_state:
+          items:
+            $ref: '#/components/schemas/EngagementStateEntry'
+          type: array
+          title: Engagement State
+          description: 'Time-varying engagement state derived from detected engagement
+            signals. Each entry covers a contiguous time window with a single state:
+            ''engaged'' when engagement is detected, ''disengaged'' when disengagement
+            is detected, ''neutral'' otherwise.'
+          examples:
+          - - end: 5.0
+              start: 0.0
+              state: engaged
+            - end: 15.0
+              start: 5.0
+              state: neutral
+        conversation_quality:
+          anyOf:
+          - $ref: '#/components/schemas/ConversationQuality'
+          - type: 'null'
+          title: Conversation Quality
+          description: Conversation quality with overall and time-varying scores.
+            Present only when explicitly requested via the include[] parameter and
+            the video contains at least one detected signal. When present, every dimension
+            score and the overall quality index are guaranteed to be numeric (50 indicates
+            no diagnostic evidence for that dimension).
+          examples:
+          - overall:
+              authority: 68.0
+              clarity: 67.0
+              energy: 80.0
+              learning: 70.0
+              quality_index: 72.0
+              rapport: 75.0
+            timeline:
+            - end: 10.0
+              start: 0.0
+              values:
+                authority: 70.0
+                clarity: 69.0
+                energy: 78.0
+                learning: 68.0
+                quality_index: 70.0
+                rapport: 77.0
+            - end: 20.0
+              start: 10.0
+              values:
+                authority: 65.0
+                clarity: 65.0
+                energy: 82.0
+                learning: 72.0
+                quality_index: 74.0
+                rapport: 73.0
+      type: object
+      required:
+      - signals
+      title: AnalysisResult
+      description: Contains the result of the video analysis.
+    Body_analyze_upload_v1_upload_analyze_post:
+      properties:
+        file:
+          type: string
+          format: binary
+          title: File
+          description: 'Video file to analyze. The video must be at least 3 seconds
+            long and the upload must not exceed 32MB. Accepts the following formats:
+            mp4, avi, mov, mkv, mpeg-ts, webm.'
+        include[]:
+          items:
+            $ref: '#/components/schemas/IncludeFlag'
+          type: array
+          title: Include[]
+          description: Optional flags indicating which sections should be included
+            in the response. When omitted, no optional sections are included.
+          default: []
+      type: object
+      required:
+      - file
+      title: Body_analyze_upload_v1_upload_analyze_post
+    ConversationQuality:
+      properties:
+        overall:
+          $ref: '#/components/schemas/ConversationQualityValues'
+          title: Overall
+          description: Aggregated conversation quality scores for the entire conversation.
+            Added when `conversation_quality_overall` is included in the Include flags.
+        timeline:
+          items:
+            $ref: '#/components/schemas/ConversationQualityTimelineEntry'
+          type: array
+          title: Timeline
+          description: Time-varying conversation quality scores in consecutive, non-overlapping
+            windows. Added when `conversation_quality_timeline` is included in the
+            Include flags.
+      type: object
+      required:
+      - overall
+      - timeline
+      title: ConversationQuality
+      description: 'Conversation quality Index with optional overall and time-varying
+        scores.
+
+
+        Use the Include flags in the request to control which conversation quality
+
+        sections are included in the response.'
+    ConversationQualityTimelineEntry:
+      properties:
+        start:
+          type: number
+          title: Start Time
+          description: Window start time in seconds.
+          examples:
+          - 0.0
+        end:
+          type: number
+          title: End Time
+          description: Window end time in seconds.
+          examples:
+          - 10.0
+        values:
+          $ref: '#/components/schemas/ConversationQualityValues'
+          title: Values
+          description: Conversation quality dimension scores for this time window.
+      type: object
+      required:
+      - start
+      - end
+      - values
+      title: ConversationQualityTimelineEntry
+      description: Conversation quality values for a single time window in the timeline.
+    ConversationQualityValues:
+      properties:
+        quality_index:
+          type: number
+          title: Quality Index
+          description: Overall conversation quality index (0-100). Mean of the five
+            dimension scores.
+          examples:
+          - 72.0
+        clarity:
+          type: number
+          title: Clarity
+          description: Clarity / Structure dimension score (0-100). Returns 50 when
+            no diagnostic evidence is available for this dimension.
+          examples:
+          - 67.0
+        authority:
+          type: number
+          title: Authority
+          description: Authority / Credibility dimension score (0-100). Returns 50
+            when no diagnostic evidence is available for this dimension.
+          examples:
+          - 68.0
+        energy:
+          type: number
+          title: Energy
+          description: Energy / Presence dimension score (0-100). Returns 50 when
+            no diagnostic evidence is available for this dimension.
+          examples:
+          - 80.0
+        rapport:
+          type: number
+          title: Rapport
+          description: Rapport / Relational Safety dimension score (0-100). Returns
+            50 when no diagnostic evidence is available for this dimension.
+          examples:
+          - 75.0
+        learning:
+          type: number
+          title: Learning
+          description: Learning / Exploration dimension score (0-100). Returns 50
+            when no diagnostic evidence is available for this dimension.
+          examples:
+          - 70.0
+      type: object
+      required:
+      - quality_index
+      - clarity
+      - authority
+      - energy
+      - rapport
+      - learning
+      title: ConversationQualityValues
+      description: 'Aggregated conversation quality scores for the entire conversation.
+
+
+        Added when `conversation_quality_overall` is included in the Include flags.'
+    EngagementLevel:
+      type: string
+      enum:
+      - engaged
+      - neutral
+      - disengaged
+      title: EngagementLevel
+      description: Engagement state levels derived from model signals.
+    EngagementStateEntry:
+      properties:
+        state:
+          $ref: '#/components/schemas/EngagementLevel'
+          title: State
+          description: The engagement level for this time window.
+          examples:
+          - engaged
+        start:
+          type: number
+          title: Start Time
+          description: Start time in seconds relative to the video start.
+          examples:
+          - 0.0
+        end:
+          type: number
+          title: End Time
+          description: End time in seconds relative to the video start.
+          examples:
+          - 5.0
+      type: object
+      required:
+      - state
+      - start
+      - end
+      title: EngagementStateEntry
+      description: A contiguous time window with a single engagement state.
+    ErrorResponse:
+      properties:
+        error_id:
+          type: string
+          title: Error Id
+          description: Machine-readable error code (e.g. 'ih2001').
+        correlation_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Correlation Id
+          description: Unique identifier assigned to each API request or WebSocket
+            connection. It allows both the client and the service to trace a specific
+            interaction through logs and internal systems. If you contact support
+            about a particular request or connection, providing the correlation_id
+            allows the team to locate the relevant records quickly. Clients who may
+            later request deletion of data for privacy reasons should store the correlation_id,
+            as it can be used to identify and remove data associated with that specific
+            interaction.
+        link:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Link
+          description: URL to additional information about this error.
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Message
+          description: Error explanation. Contains any additional details about the
+            specific error that was encountered.
+      type: object
+      required:
+      - error_id
+      title: ErrorResponse
+      description: 'Structured error returned by all HTTP error paths.
+
+
+        Only ``error_id`` is required. The other fields are included when available.'
+    IncludeFlag:
+      type: string
+      enum:
+      - conversation_quality_overall
+      - conversation_quality_timeline
+      title: IncludeFlag
+      description: 'Use these flags to control which conversation quality sections
+        are included in the response.
+
+
+        `conversation_quality_overall`: Include overall conversation quality index.
+
+        `conversation_quality_timeline`: Include conversation quality timeline.'
+    Probability:
+      type: string
+      enum:
+      - high
+      - medium
+      - low
+      title: Probability
+      description: Signal probability levels.
+    Signal:
+      properties:
+        type:
+          $ref: '#/components/schemas/SignalType'
+          title: Signal Type
+          description: The name of the detected social signal (e.g., 'agreement',
+            'confusion').
+          examples:
+          - agreement
+        start:
+          type: number
+          title: Start Time
+          description: Start time of the signal in seconds relative to the video start.
+          examples:
+          - 10.0
+        end:
+          type: number
+          title: End Time
+          description: End time of the signal in seconds relative to the video start.
+          examples:
+          - 15.0
+        probability:
+          anyOf:
+          - $ref: '#/components/schemas/Probability'
+          - type: 'null'
+          title: Probability
+          description: 'Confidence level of the detected signal: high, medium, or
+            low.'
+          examples:
+          - high
+        rationale:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Rationale
+          description: A concise, evidence-based explanation of why the signal was
+            detected. Grounded in observable cues from the video.
+          examples:
+          - Subject nodded repeatedly while maintaining eye contact.
+      type: object
+      required:
+      - type
+      - start
+      - end
+      title: Signal
+      description: Detected signal.
+    SignalType:
+      type: string
+      enum:
+      - agreement
+      - confidence
+      - confusion
+      - disagreement
+      - disengagement
+      - engagement
+      - frustration
+      - hesitation
+      - interest
+      - skepticism
+      - stress
+      - uncertainty
+      title: SignalType
+      description: Enumeration of supported social signals.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API key authentication. Include your API key in the Authorization
+        header as 'Bearer <api_key>'.

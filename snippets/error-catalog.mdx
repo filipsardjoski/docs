@@ -1,0 +1,293 @@
+### General
+
+#### ih1001 - Internal Server Error
+
+This error indicates that our service encountered an unexpected condition while processing your request. This means the request was received and understood, but we were unable to complete it due to an internal issue.
+
+In most cases, this is temporary and may be resolved by retrying the request after a short delay. We recommend implementing retry logic with exponential backoff.
+
+If you encounter this error, it generally reflects a problem on our side rather than an issue with your request, unless otherwise indicated in the response body.
+
+#### ih1002 - Service Temporarily Unavailable
+
+This error indicates that our service is currently unable to process your request due to temporary conditions such as maintenance, system overload, or a dependency outage. This status is typically transient.
+
+We recommend retrying the request after a short delay and implementing retry logic with exponential backoff. When provided, please respect the Retry-After header, which indicates how long to wait before attempting the request again.
+
+If the issue persists beyond a reasonable period, contact support so we can investigate further.
+
+#### ih1003 - Dependency Unavailable
+
+A required backend dependency (such as our database) is temporarily unavailable. The request was received and authenticated, but we could not reach the dependency needed to complete it. This status is typically transient.
+
+We recommend retrying the request after a short delay and implementing retry logic with exponential backoff.
+
+If the issue persists beyond a reasonable period, contact support so we can investigate further.
+
+---
+
+### Authentication and authorization
+
+#### ih2001 - Invalid Credentials
+
+The provided credentials are invalid. The API key submitted in ``Authorization: Bearer <api_key>`` does not match an active key. For security reasons we do not reveal whether the key was unrecognized, disabled, or revoked.
+
+##### How to fix
+
+1. Verify your API key is correct.
+2. Ensure you are not using a rotated, disabled, or revoked key.
+3. If you have recently rotated your credentials, use the new value.
+4. Contact support if the problem persists.
+
+#### ih2002 - Missing Credentials
+
+No authentication credential was found in the ``Authorization`` header (for HTTP requests) or the ``sec-websocket-protocol`` header (for WebSocket connections).
+
+##### How to fix
+
+1. Include your API key in the ``Authorization`` header as ``Bearer <api_key>``.
+2. For WebSocket connections, pass the API key via the ``sec-websocket-protocol`` header.
+
+#### ih2003 - Insufficient Scope
+
+The API key is valid but is not provisioned with the scope required by this endpoint.
+
+##### How to fix
+
+- Have the key reissued or updated with the required scope.
+
+---
+
+### Rate limits and quotas
+
+#### ih3001 - Rate Limit Exceeded
+
+You have exceeded the configured requests-per-minute limit for your account.
+
+##### How to fix
+
+1. Reduce the frequency of your requests.
+2. Implement retry logic with exponential backoff.
+3. Respect the ``Retry-After`` response header.
+4. Contact support if you need a higher rate limit.
+
+#### ih3002 - Concurrent Request Limit
+
+You have exceeded the maximum number of concurrent in-flight requests allowed for your account.
+
+##### How to fix
+
+* Wait for one or more active requests to complete before submitting another. Consider implementing a request queue to manage concurrency.
+
+#### ih3003 - Quota Exceeded
+
+Your account has exhausted its analysis quota (e.g. total video-minutes for the current billing period or credit allowance).
+
+##### How to fix
+
+* Contact support to upgrade your plan, purchase additional credits, or wait for the quota to reset at the start of the next billing period.
+
+#### ih3004 - Daily Quota Exceeded
+
+Your account has exhausted its daily analysis quota.
+
+##### How to fix
+
+* Wait for the quota to reset (the ``reset_time`` is included in the response) or contact support to increase your daily limit.
+
+#### ih3005 - Inactive Subscription
+
+Your subscription is inactive or your billing information needs to be updated.
+
+##### How to fix
+
+* Contact support to reactivate your subscription or update your billing information.
+
+---
+
+### Input validation
+
+#### ih4001 - Missing Video File
+
+No video file was included in the multipart form data, or the field name is incorrect.
+
+##### How to fix
+
+* Include the video file as a ``multipart/form-data`` field named ``file``. Ensure the ``Content-Type`` header is set to ``multipart/form-data``.
+
+#### ih4002 - Unsupported File Type
+
+The file extension or detected content type is not in the list of supported formats.
+
+##### How to fix
+
+* Re-encode or convert the video to a supported format. Supported formats include: MP4, AVI, MOV, MKV, WebM.
+
+#### ih4003 - File Too Large
+
+The uploaded file exceeds the maximum upload size.
+
+##### How to fix
+
+* Reduce the file size by compressing the video, lowering the resolution, or trimming the duration.
+
+#### ih4004 - Video Too Long
+
+The video duration exceeds the maximum allowed length for a single request.
+
+##### How to fix
+
+* Split the video into shorter segments and submit each one separately.
+
+#### ih4005 - Invalid Parameter
+
+A query parameter or body field has a value that is syntactically valid but outside its allowed range or fails semantic validation.
+
+##### How to fix
+
+* Review the parameter value mentioned in the error message and ensure it falls within the documented range.
+
+#### ih4006 - Invalid JSON
+
+The request body or a WebSocket control message could not be parsed as valid JSON.
+
+##### How to fix
+
+* Ensure the ``Content-Type`` header is ``application/json`` and the body is well-formed JSON. Validate your JSON payload with a linter before sending.
+
+#### ih4007 - Video Too Short
+
+The video is shorter than the minimum supported duration (3 seconds) or contains too little data to be analyzed. Recordings below this threshold cannot be analyzed.
+
+##### How to fix
+
+* Ensure the video is at least 3 seconds long.
+
+---
+
+### Content and media issues
+
+#### ih5001 - Empty Video
+
+The video file reports a duration of zero, or the duration cannot be determined at all. This typically indicates an empty file or a container with no media tracks.
+
+##### How to fix
+
+* Verify the video file plays correctly in a media player before uploading. Re-record or re-encode the file if necessary.
+
+#### ih5002 - Corrupted Video
+
+The video file reports a negative duration or the container structure cannot be inspected, indicating corruption or an unrecognizable format.
+
+##### How to fix
+
+* Re-encode the video using a standard tool (e.g. ffmpeg) with a supported codec and container format.
+
+#### ih5003 - Unsupported Codec
+
+The video codec or container format is not supported and cannot be decoded.
+
+##### How to fix
+
+* Re-encode the video using a widely supported codec and container, such as H.264 video in an MP4 container with AAC audio.
+
+#### ih5004 - Malformed Video Segment
+
+A video segment is structurally invalid: it is missing required container atoms and cannot be processed.
+
+##### How to fix
+
+* Verify the video file is complete and not truncated. Re-encode the file using a tool like ffmpeg with the ``-movflags +faststart`` flag.
+
+#### ih5005 - Video Segment Too Large
+
+A video segment exceeds the per-segment size cap enforced before analysis.
+
+The maximum segment size is 32MB.
+
+##### How to fix
+
+* Reduce the video resolution or bitrate before uploading, or split the video into shorter segments.
+
+#### ih5006 - Video Segment Too Short
+
+A video segment is shorter than the minimum supported duration (3 seconds) or contains too little data to be analyzed.
+
+##### How to fix
+
+* Send chunks that each contain at least 3 seconds of media.
+
+#### ih5007 - Content Rejected by Model
+
+The analysis service rejected the video content. This may occur due to content policy filtering or an unsupported media payload.
+
+##### How to fix
+
+1. Verify the video is valid and does not violate the service's usage policies.
+2. Try re-encoding the video if the issue persists.
+
+---
+
+### Realtime and session issues
+
+#### ih6001 - Invalid Message Format
+
+A text or binary message sent by the client does not match the expected protocol schema.
+
+##### How to fix
+
+1. Review the WebSocket API documentation.
+2. Ensure messages conform to the expected format.
+
+#### ih6002 - Message Too Large
+
+A single binary video chunk sent over the WebSocket connection exceeds the maximum permitted message size.
+
+The maximum message size is 32MB.
+
+##### How to fix
+
+1. Send smaller video chunks.
+2. Reduce the chunk duration or video bitrate.
+
+#### ih6003 - Session Idle Timeout
+
+The connection was idle (no data received from the client) for longer than the configured session timeout.
+
+The maximum idle time is 5 minutes.
+
+##### How to fix
+
+1. Send video data regularly to keep the session active.
+2. If you need a longer idle period, reconnect when ready to resume.
+
+#### ih6004 - Session Duration Exceeded
+
+The total elapsed time for the WebSocket session has exceeded the maximum allowed session duration.
+
+The maximum session duration is 60 minutes.
+
+##### How to fix
+
+1. Start a new WebSocket session.
+2. If you need longer sessions, contact support to discuss your use case.
+
+#### ih6005 - Server Going Away
+
+The server is performing a scheduled update and has gracefully closed your WebSocket session.
+
+##### How to fix
+
+1. Reconnect to the WebSocket endpoint to start a new session.
+2. This is a transient condition — the service will be available again shortly.
+
+#### ih6006 - Shutdown Warning
+
+The server is warning that it will shut down soon for a scheduled update. The connection remains open until the countdown expires, at which point the session will be closed with IH6005.
+
+Generally, an advance notice is sent 5 minutes before shutdown. The `seconds_remaining` field in the message indicates how long until the connection closes. A final warning is sent 30 seconds before shutdown.
+
+##### How to fix
+
+1. Prepare to reconnect when the session is closed.
+2. This is an advance notice — you can continue sending data until the connection closes.

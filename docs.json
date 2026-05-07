@@ -1,0 +1,128 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Interhuman AI Docs",
+  "defaultOrigin": "https://docs.interhuman.ai",
+  "colors": {
+    "primary": "#181818",
+    "light": "#FFFFFF",
+    "dark": "#181818"
+  },
+  "fonts": {
+    "heading": {
+      "family": "Surt",
+      "source": "/fonts/ATSurt/ATSurt-Regular.woff2",
+      "format": "woff2",
+      "weight": 800
+    },
+    "body": {
+      "family": "Surt",
+      "source": "/fonts/ATSurt/ATSurt-Regular.woff2",
+      "format": "woff2",
+      "weight": 400
+    }
+  },
+  "favicon": "/favicon.svg",
+  "openapi": "api-reference/openapi.yaml",
+  "asyncapi": "api-reference/asyncapi.yaml",
+  "api": {
+    "playground": {
+      "display": "interactive"
+    }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "icon": "rocket",
+            "pages": [
+              "getting-started/introduction",
+              "getting-started/video-upload-quickstart"
+            ]
+          },
+          {
+            "group": "How To",
+            "icon": "code",
+            "pages": [
+              "how-to/get-api-key",
+              "how-to/agent-skills",
+              "how-to/build-video-analyzer-app-codealong",
+              "how-to/get-support"
+            ]
+          },
+          {
+            "group": "Explanations",
+            "pages": [
+              "explanations/social-signals",
+              "explanations/conversation-quality",
+              "explanations/model-improvement-program"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Resources",
+            "icon": "layer-group",
+            "pages": [
+              "api-reference/overview",
+              "api-reference/authentication",
+              "api-reference/upload-analyze",
+              "api-reference/stream-analyze",
+              "api-reference/error-handling"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Changelog",
+        "groups": [
+          {
+            "group": "Product Updates",
+            "pages": [
+              "changelog"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "navbar": {
+    "primary": {
+      "type": "button",
+      "label": "Interhuman AI",
+      "href": "https://interhuman.ai"
+    }
+  },
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
+  },
+  "integrations": {
+    "posthog": {
+      "apiKey": "phc_tUGuDKo7PE2SgsVGG0xc4Uc01sqqtsEHu8tgECbPs5u",
+      "apiHost": "https://eu.i.posthog.com" 
+    }
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/InterhumanAI",
+      "github": "https://github.com/InterhumanAI",
+      "linkedin": "https://www.linkedin.com/company/interhuman-ai"
+    }
+  }
+}
